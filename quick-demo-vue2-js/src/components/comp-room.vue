@@ -6,25 +6,41 @@
 <template>
   <div class="rtc-container">
     <!-- 进房操作区域 -->
-    <p v-if="isHostMode" class="label">{{ $t('Operation') }}</p>
+    <p v-if="isHostMode" class="label">{{ $t("Operation") }}</p>
     <div class="control-container">
       <div class="rtc-control-container">
         <el-button
           class="button"
           type="primary"
-          size="small" :disabled="isJoining || isJoined" @click="handleJoinRoom">{{ $t('Join Room') }}</el-button>
+          size="small"
+          :disabled="isJoining || isJoined"
+          @click="handleJoinRoom"
+          >{{ $t("Join Room") }}</el-button
+        >
         <el-button
           v-if="isHostMode"
           class="button"
           type="primary"
-          size="small" :disabled="isPublishing || isPublished" @click="handlePublish">{{ $t('Publish') }}</el-button>
+          size="small"
+          :disabled="isPublishing || isPublished"
+          @click="handlePublish"
+          >{{ $t("Publish") }}</el-button
+        >
         <el-button
           v-if="isHostMode"
           class="button"
-          type="primary" size="small" @click="handleUnpublish">{{ $t('Unpublish') }}</el-button>
+          type="primary"
+          size="small"
+          @click="handleUnpublish"
+          >{{ $t("Unpublish") }}</el-button
+        >
         <el-button
           class="button"
-          type="primary" size="small" @click="handleLeave">{{ $t('Leave Room') }}</el-button>
+          type="primary"
+          size="small"
+          @click="handleLeave"
+          >{{ $t("Leave Room") }}</el-button
+        >
       </div>
       <div v-if="isHostMode" class="screen-share-control-container">
         <el-button
@@ -32,18 +48,29 @@
           type="primary"
           size="small"
           :disabled="isShareJoined && isSharePublished"
-          @click="handleStartScreenShare">{{ $t('Start Screen Share') }}</el-button>
+          @click="handleStartScreenShare"
+          >{{ $t("Start Screen Share") }}</el-button
+        >
         <el-button
           class="button"
-          type="primary" size="small" @click="handleStopScreenShare">{{ $t('Stop Screen Share') }}</el-button>
+          type="primary"
+          size="small"
+          @click="handleStopScreenShare"
+          >{{ $t("Stop Screen Share") }}</el-button
+        >
       </div>
     </div>
 
     <!-- 显示邀请链接 -->
     <div v-if="showInviteLink" class="invite-link-container">
-      <span v-if="isEnLang">Copy the link to invite friends to join the video call, one link can invite only one person,
-        the link will be updated automatically after copying.</span>
-      <span v-else>复制链接邀请好友加入视频通话，一条链接仅可邀请一人，复制后自动更新链接。</span>
+      <span v-if="isEnLang"
+        >Copy the link to invite friends to join the video call, one link can
+        invite only one person, the link will be updated automatically after
+        copying.</span
+      >
+      <span v-else
+        >复制链接邀请好友加入视频通话，一条链接仅可邀请一人，复制后自动更新链接。</span
+      >
       <el-input class="invite-input" v-model="inviteLink">
         <template slot="prepend">
           <el-tooltip
@@ -52,7 +79,8 @@
             content="Copied!"
             placement="bottom"
             :manual="true"
-            v-model="showCopiedTip">
+            v-model="showCopiedTip"
+          >
             <span class="invite-btn" @click="handleCopyInviteLink">
               <svg-icon icon-name="copy"></svg-icon>
             </span>
@@ -82,7 +110,7 @@
             <span v-if="!isMutedVideo" @click="muteVideo">
               <svg-icon icon-name="video" class="icon-class"></svg-icon>
             </span>
-            <span v-if="isMutedVideo"  @click="unmuteVideo">
+            <span v-if="isMutedVideo" @click="unmuteVideo">
               <svg-icon icon-name="video-muted" class="icon-class"></svg-icon>
             </span>
           </div>
@@ -101,22 +129,22 @@
     <!-- 远端流区域 -->
     <div class="remote-container">
       <div
-        v-for="(item) in remoteStreamList"
+        v-for="item in remoteStreamList"
         :key="item.getUserId()"
         :id="item.getUserId()"
-        class="remote-stream-container">
-      </div>
+        class="remote-stream-container"
+      ></div>
     </div>
   </div>
 </template>
 
 <script>
-import rtc from './mixins/rtc.js';
-import shareRtc from  './mixins/share-rtc.js';
-import LibGenerateTestUserSig from '@/utils/lib-generate-test-usersig.min.js';
+import rtc from "./mixins/rtc.js";
+import shareRtc from "./mixins/share-rtc.js";
+import LibGenerateTestUserSig from "@/utils/lib-generate-test-usersig.min.js";
 
 export default {
-  name: 'compRoom',
+  name: "compRoom",
   mixins: [rtc, shareRtc],
   props: {
     type: String,
@@ -131,27 +159,31 @@ export default {
   data() {
     return {
       logList: [],
-      inviteLink: '',
+      inviteLink: "",
       showCopiedTip: false,
     };
   },
   computed: {
     isHostMode() {
-      return this.type !== 'invite';
+      return this.type !== "invite";
     },
     isEnLang() {
-      return this.$i18n.locale === 'en';
+      return this.$i18n.locale === "en";
     },
     showInviteLink() {
-      return this.isHostMode && (this.isJoined || this.isShareJoined) && this.inviteLink;
+      return (
+        this.isHostMode &&
+        (this.isJoined || this.isShareJoined) &&
+        this.inviteLink
+      );
     },
   },
   watch: {
     cameraId(val) {
-      this.switchDevice('video', val);
+      this.switchDevice("video", val);
     },
     microphoneId(val) {
-      this.switchDevice('audio', val);
+      this.switchDevice("audio", val);
     },
   },
   methods: {
@@ -161,9 +193,15 @@ export default {
       }
       const { sdkAppId, secretKey, roomId } = this;
       const inviteUserId = `user_${parseInt(Math.random() * 100000000, 10)}`;
-      const userSigGenerator = new LibGenerateTestUserSig(sdkAppId, secretKey, 604800);
+      const userSigGenerator = new LibGenerateTestUserSig(
+        sdkAppId,
+        secretKey,
+        604800
+      );
       const inviteUserSig = userSigGenerator.genTestUserSig(inviteUserId);
-      this.inviteLink = encodeURI(`${location.origin}${location.pathname}#/invite?sdkAppId=${sdkAppId}&userSig=${inviteUserSig}&roomId=${roomId}&userId=${inviteUserId}`);
+      this.inviteLink = encodeURI(
+        `${location.origin}${location.pathname}#/invite?sdkAppId=${sdkAppId}&userSig=${inviteUserSig}&roomId=${roomId}&userId=${inviteUserId}`
+      );
     },
     handleCopyInviteLink() {
       navigator.clipboard.writeText(this.inviteLink);
@@ -177,18 +215,27 @@ export default {
     async handleJoinRoom() {
       if (this.isHostMode) {
         if (!this.sdkAppId || !this.secretKey) {
-          alert(this.$t('Please enter sdkAppId and secretKey'));
+          alert(this.$t("Please enter sdkAppId and secretKey"));
           return;
         }
         if (!this.userId || !this.roomId) {
-          alert(this.$t('Please enter userId and roomId'));
+          alert(this.$t("Please enter userId and roomId"));
           return;
         }
-        const userSigGenerator = new LibGenerateTestUserSig(this.sdkAppId, this.secretKey, 604800);
+        const userSigGenerator = new LibGenerateTestUserSig(
+          this.sdkAppId,
+          this.secretKey,
+          604800
+        );
         this.userSig = userSigGenerator.genTestUserSig(this.userId);
       } else {
-        if (!this.sdkAppId || !this.inviteUserSig || !this.userId || !this.roomId) {
-          alert(this.$t('Please reacquire the invitation link'));
+        if (
+          !this.sdkAppId ||
+          !this.inviteUserSig ||
+          !this.userId ||
+          !this.roomId
+        ) {
+          alert(this.$t("Please reacquire the invitation link"));
           return;
         }
         this.userSig = this.inviteUserSig;
@@ -219,7 +266,7 @@ export default {
     // 点击【开始屏幕分享】按钮
     async handleStartScreenShare() {
       if (!this.sdkAppId || !this.secretKey) {
-        alert(this.$t('Please enter sdkAppId and secretKey'));
+        alert(this.$t("Please enter sdkAppId and secretKey"));
         return;
       }
       await this.initShareClient();
@@ -241,7 +288,7 @@ export default {
         return;
       }
       this.logList.push({
-        type: 'success',
+        type: "success",
         log,
       });
       const { scrollHeight } = this.$refs.logContainer;
@@ -254,7 +301,7 @@ export default {
         return;
       }
       this.logList.push({
-        type: 'failed',
+        type: "failed",
         log,
       });
       const { scrollHeight } = this.$refs.logContainer;
@@ -264,15 +311,17 @@ export default {
       this.$aegis.reportEvent({
         name,
         ext1: `${name}-success`,
-        ext2: 'webrtcQuickDemoVue2',
+        ext2: "webrtcQuickDemoVue2",
         ext3: this.sdkAppId,
       });
     },
-    reportFailedEvent(name, error, type = 'rtc') {
+    reportFailedEvent(name, error, type = "rtc") {
       this.$aegis.reportEvent({
         name,
-        ext1: `${name}-failed#${this.roomId}*${type === 'share' ? this.shareUserId : this.userId}*${error.message}`,
-        ext2: 'webrtcQuickDemoVue2',
+        ext1: `${name}-failed#${this.roomId}*${
+          type === "share" ? this.shareUserId : this.userId
+        }*${error.message}`,
+        ext2: "webrtcQuickDemoVue2",
         ext3: this.sdkAppId,
       });
     },
@@ -385,7 +434,6 @@ export default {
   }
 
   .remote-container {
-    width: 100%;
     margin-top: 10px;
     display: flex;
     flex-wrap: wrap;

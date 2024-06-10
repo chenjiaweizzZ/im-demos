@@ -6,13 +6,13 @@
 <template>
   <div class="rtc-container">
     <!-- 进房操作区域 -->
-    <p v-if="isHostMode" class="label">Operation</p>
-    <div class="control-container">
+    <!-- <p v-if="isHostMode" class="label">Operation</p> -->
+    <!-- <div class="control-container">
       <div class="rtc-control-container">
         <el-button
           class="button"
           type="primary"
-          size="small" :disabled="isJoining || isJoined" @click="handleJoinRoom">Join Room</el-button>
+          size="small" :disabled="isJoining || isJoined" @click="handleJoinRoom">发起视频</el-button>
         <el-button
           v-if="isHostMode"
           class="button"
@@ -24,7 +24,7 @@
           type="primary" size="small" @click="handleUnpublish">Unpublish</el-button>
         <el-button
           class="button"
-          type="primary" size="small" @click="handleLeave">Leave Room</el-button>
+          type="primary" size="small" @click="handleLeave">结束视频</el-button>
       </div>
       <div v-if="isHostMode" class="screen-share-control-container">
         <el-button
@@ -32,18 +32,18 @@
           type="primary"
           size="small"
           :disabled="isShareJoined && isSharePublished"
-          @click="handleStartScreenShare">Start Screen Share</el-button>
+          @click="handleStartScreenShare">分享屏幕</el-button>
         <el-button
           class="button"
-          type="primary" size="small" @click="handleStopScreenShare">Stop Screen Share</el-button>
+          type="primary" size="small" @click="handleStopScreenShare">停止分享屏幕</el-button>
       </div>
-    </div>
+    </div> -->
 
     <!-- 显示邀请链接 -->
-    <div v-if="showInviteLink" class="invite-link-container">
-      <span v-if="isEnLang">Copy the link to invite friends to join the video call, one link can invite only one person,
-        the link will be updated automatically after copying.</span>
-      <span v-else>复制链接邀请好友加入视频通话，一条链接仅可邀请一人，复制后自动更新链接。</span>
+    <!-- <div v-if="showInviteLink" class="invite-link-container">
+      <span
+        >复制链接邀请好友加入视频通话，一条链接仅可邀请一人，复制后自动更新链接。</span
+      >
       <el-input class="invite-input" v-model="inviteLink">
         <template slot="prepend">
           <el-tooltip
@@ -52,18 +52,24 @@
             content="Copied!"
             placement="bottom"
             :manual="true"
-            v-model="showCopiedTip">
+            v-model="showCopiedTip"
+          >
             <span class="invite-btn" @click="handleCopyInviteLink">
               <svg-icon icon-name="copy"></svg-icon>
             </span>
           </el-tooltip>
         </template>
       </el-input>
-    </div>
+    </div> -->
 
     <div class="info-container" :class="$isMobile && 'info-container-mobile'">
       <!-- Log 展示区域 -->
-      <div v-if="isHostMode" class="log-container" ref="logContainer">
+      <div
+        v-if="isHostMode"
+        class="log-container"
+        ref="logContainer"
+        v-show="false"
+      >
         <p class="log-label">Log:</p>
         <div v-for="(item, index) in logList" :key="index">
           <span class="log-state" v-if="item.type === 'success'">🟩 </span>
@@ -74,15 +80,13 @@
 
       <!-- 本地流区域 -->
       <div v-if="localStream" class="local-stream-container">
-        <!-- 本地流播放区域 -->
         <div id="localStream" class="local-stream-content"></div>
-        <!-- 本地流操作栏 -->
         <div v-if="isPlayingLocalStream" class="local-stream-control">
           <div class="video-control control">
             <span v-if="!isMutedVideo" @click="muteVideo">
               <svg-icon icon-name="video" class="icon-class"></svg-icon>
             </span>
-            <span v-if="isMutedVideo"  @click="unmuteVideo">
+            <span v-if="isMutedVideo" @click="unmuteVideo">
               <svg-icon icon-name="video-muted" class="icon-class"></svg-icon>
             </span>
           </div>
@@ -101,22 +105,22 @@
     <!-- 远端流区域 -->
     <div class="remote-container">
       <div
-        v-for="(item) in remoteStreamList"
+        v-for="item in remoteStreamList"
         :key="item.getUserId()"
         :id="item.getUserId()"
-        class="remote-stream-container">
-      </div>
+        class="remote-stream-container"
+      ></div>
     </div>
   </div>
 </template>
 
 <script>
-import rtc from './mixins/rtc.js';
-import shareRtc from  './mixins/share-rtc.js';
-import LibGenerateTestUserSig from '@/utils/lib-generate-test-usersig.min.js';
+import rtc from "./mixins/rtc.js";
+import shareRtc from "./mixins/share-rtc.js";
+import LibGenerateTestUserSig from "@/utils/lib-generate-test-usersig.min.js";
 
 export default {
-  name: 'compRoom',
+  name: "compRoom",
   mixins: [rtc, shareRtc],
   props: {
     type: String,
@@ -131,27 +135,31 @@ export default {
   data() {
     return {
       logList: [],
-      inviteLink: '',
+      inviteLink: "",
       showCopiedTip: false,
     };
   },
   computed: {
     isHostMode() {
-      return this.type !== 'invite';
+      return this.type !== "invite";
     },
     isEnLang() {
-      return this.$i18n.locale === 'en';
+      return this.$i18n.locale === "en";
     },
     showInviteLink() {
-      return this.isHostMode && (this.isJoined || this.isShareJoined) && this.inviteLink;
+      return (
+        this.isHostMode &&
+        (this.isJoined || this.isShareJoined) &&
+        this.inviteLink
+      );
     },
   },
   watch: {
     cameraId(val) {
-      this.switchDevice('video', val);
+      this.switchDevice("video", val);
     },
     microphoneId(val) {
-      this.switchDevice('audio', val);
+      this.switchDevice("audio", val);
     },
   },
   methods: {
@@ -161,9 +169,16 @@ export default {
       }
       const { sdkAppId, secretKey, roomId } = this;
       const inviteUserId = `user_${parseInt(Math.random() * 100000000, 10)}`;
-      const userSigGenerator = new LibGenerateTestUserSig(sdkAppId, secretKey, 604800);
+      const userSigGenerator = new LibGenerateTestUserSig(
+        sdkAppId,
+        secretKey,
+        604800
+      );
       const inviteUserSig = userSigGenerator.genTestUserSig(inviteUserId);
-      this.inviteLink = encodeURI(`${location.origin}${location.pathname}#/invite?sdkAppId=${sdkAppId}&userSig=${inviteUserSig}&roomId=${roomId}&userId=${inviteUserId}`);
+      this.inviteLink = encodeURI(
+        `${location.origin}${location.pathname}invite?sdkAppId=${sdkAppId}&userSig=${inviteUserSig}&roomId=${roomId}&userId=${inviteUserId}`
+      );
+      console.log(this.inviteLink);
     },
     handleCopyInviteLink() {
       navigator.clipboard.writeText(this.inviteLink);
@@ -177,18 +192,27 @@ export default {
     async handleJoinRoom() {
       if (this.isHostMode) {
         if (!this.sdkAppId || !this.secretKey) {
-          alert('Please enter sdkAppId and secretKey');
+          alert("Please enter sdkAppId and secretKey");
           return;
         }
         if (!this.userId || !this.roomId) {
-          alert('Please enter userId and roomId');
+          alert("Please enter userId and roomId");
           return;
         }
-        const userSigGenerator = new LibGenerateTestUserSig(this.sdkAppId, this.secretKey, 604800);
+        const userSigGenerator = new LibGenerateTestUserSig(
+          this.sdkAppId,
+          this.secretKey,
+          604800
+        );
         this.userSig = userSigGenerator.genTestUserSig(this.userId);
       } else {
-        if (!this.sdkAppId || !this.inviteUserSig || !this.userId || !this.roomId) {
-          alert('Please reacquire the invitation link');
+        if (
+          !this.sdkAppId ||
+          !this.inviteUserSig ||
+          !this.userId ||
+          !this.roomId
+        ) {
+          alert("Please reacquire the invitation link");
           return;
         }
         this.userSig = this.inviteUserSig;
@@ -219,7 +243,7 @@ export default {
     // 点击【开始屏幕分享】按钮
     async handleStartScreenShare() {
       if (!this.sdkAppId || !this.secretKey) {
-        alert('Please enter sdkAppId and secretKey');
+        alert("Please enter sdkAppId and secretKey");
         return;
       }
       await this.initShareClient();
@@ -241,7 +265,7 @@ export default {
         return;
       }
       this.logList.push({
-        type: 'success',
+        type: "success",
         log,
       });
       const { scrollHeight } = this.$refs.logContainer;
@@ -254,7 +278,7 @@ export default {
         return;
       }
       this.logList.push({
-        type: 'failed',
+        type: "failed",
         log,
       });
       const { scrollHeight } = this.$refs.logContainer;
@@ -264,17 +288,22 @@ export default {
       this.$aegis.reportEvent({
         name,
         ext1: `${name}-success`,
-        ext2: 'webrtcQuickDemoVue2',
+        ext2: "webrtcQuickDemoVue2",
         ext3: this.sdkAppId,
       });
     },
-    reportFailedEvent(name, error, type = 'rtc') {
+    reportFailedEvent(name, error, type = "rtc") {
       this.$aegis.reportEvent({
         name,
-        ext1: `${name}-failed#${this.roomId}*${type === 'share' ? this.shareUserId : this.userId}*${error.message}`,
-        ext2: 'webrtcQuickDemoVue2',
+        ext1: `${name}-failed#${this.roomId}*${
+          type === "share" ? this.shareUserId : this.userId
+        }*${error.message}`,
+        ext2: "webrtcQuickDemoVue2",
         ext3: this.sdkAppId,
       });
+    },
+    test() {
+      console.log(1731741);
     },
   },
 };
@@ -321,6 +350,9 @@ export default {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    position: fixed;
+    right: 0;
+    bottom: 26vw;
     .log-container {
       flex-grow: 1;
       border: 1px solid #dddddd;
@@ -341,8 +373,8 @@ export default {
       }
     }
     .local-stream-container {
-      width: 480px;
-      height: 360px;
+      width: 52vw;
+      height: 40vw;
       position: relative;
       flex-shrink: 0;
       .local-stream-content {
@@ -354,7 +386,7 @@ export default {
         height: 30px;
         position: absolute;
         bottom: 0;
-        background-color: rgba(0, 0, 0, 0.3);
+        // background-color: rgba(0, 0, 0, 0.3);
         display: flex;
         justify-content: flex-end;
         align-items: center;
@@ -378,8 +410,8 @@ export default {
       margin-right: 0;
     }
     .local-stream-container {
-      width: 320px;
-      height: 240px;
+      width: 52vw;
+      height: 40vw;
       margin-top: 10px;
     }
   }
@@ -390,9 +422,9 @@ export default {
     display: flex;
     flex-wrap: wrap;
     .remote-stream-container {
-      width: 320px;
-      height: 240px;
-      margin: 0 10px 10px 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
     }
   }
 }
