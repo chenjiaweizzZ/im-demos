@@ -9,8 +9,8 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import Vconsole from 'vconsole';
 const vConsole = new Vconsole()
-Vue.use(vConsole)
 
+Vue.use(vConsole)
 Vue.use(ElementUI);
 Vue.config.productionTip = false
 Vue.prototype.$isMobile = isMobile;

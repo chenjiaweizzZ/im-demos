@@ -68,6 +68,7 @@ import rtc from "@/components/mixins/rtc.js";
 import shareRtc from "@/components/mixins/share-rtc.js";
 import compRoom from "@/components/comp-room.vue";
 import compDeviceSelect from "@/components/comp-device-select.vue";
+import { TUICallKit, TUICallKitServer, STATUS, TUIGlobal } from "@tencentcloud/call-uikit-vue2.6";
 export default {
   name: "HomeView",
   mixins: [rtc, shareRtc],
